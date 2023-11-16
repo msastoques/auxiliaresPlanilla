@@ -15,3 +15,17 @@ function mostrarBarraLateral() {
     SpreadsheetApp.getUi().showSidebar(ui);
 
 }
+
+function generarPlanilla(asignatura, sede, grado) {
+    if(asignatura == "" ||sede == "" || grado == "")
+    {
+        return{};
+    }
+    let ui = SpreadsheetApp.getUi();
+    let respuesta = ui.alert('Generador de planillas. Pulsa Si para continuar', ui.ButtonSet.YES_NO);
+    if (respuesta == ui.Button.YES) {
+    } else {
+        ui.alert('Se ha cancelado la generación de planillas')
+    }
+    return{};
+}

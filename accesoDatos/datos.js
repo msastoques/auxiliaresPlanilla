@@ -11,7 +11,7 @@ class GestorLista {
     }
 
     getAsignaturas() {
-        
+
         const inicio = 2;
         const fin = 20;
         const rango = this._hojaActual.getRange('Z' + inicio + ':Z' + fin);
@@ -20,14 +20,14 @@ class GestorLista {
         const hasta = (fin - inicio + 1);
         for (let i = 1; i < hasta; i++) {
             let dato = rango.getCell(i, 1).getValue();
-            if(dato == "")break;
-            this._asignatura.push(dato);            
-        }       
+            if (dato == "") break;
+            this._asignatura.push(dato);
+        }
         return this._asignatura;
     }
 
     getSedes() {
-        
+
         const inicio = 2;
         const fin = 13;
         const rango = this._hojaActual.getRange('AB' + inicio + ':AB' + fin);
@@ -36,14 +36,14 @@ class GestorLista {
         const hasta = (fin - inicio + 1);
         for (let i = 1; i < hasta; i++) {
             let dato = rango.getCell(i, 1).getValue();
-            if(dato == "")break;
-            this._sede.push(dato);            
-        }       
+            if (dato == "") break;
+            this._sede.push(dato);
+        }
         return this._sede;
     }
 
     getGrados() {
-        
+
         const inicio = 2;
         const fin = 27;
         const rango = this._hojaActual.getRange('AA' + inicio + ':AA' + fin);
@@ -52,12 +52,39 @@ class GestorLista {
         const hasta = (fin - inicio + 1);
         for (let i = 1; i < hasta; i++) {
             let dato = parseInt(rango.getCell(i, 1).getValue()).toFixed(0);
-            if(isNaN(dato))break;
-            this._grado.push(dato);            
-        }       
+            if (isNaN(dato)) break;
+            this._grado.push(dato);
+        }
         return this._grado;
     }
 }
+
+function getAsignaturas() {
+    const gestor = new GestorLista();
+
+    let lista = gestor.getAsignaturas();
+
+    //return {Asignaturas: lista};
+    return lista;
+}
+
+function getSedes() {
+    const gestor = new GestorLista();
+
+    let lista = gestor.getSedes();
+    
+    return lista;
+}
+
+function getGrados() {
+    const gestor = new GestorLista();
+
+    let lista = gestor.getGrados();
+    
+    return lista;
+}
+
+
 
 //#region prueba
 

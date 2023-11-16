@@ -14,39 +14,38 @@
             background-color: rgb(255, 243, 205);
         }
 
-            .loading-container {
-                display: none;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                background-color: #f4f4f4;
+        .loading-container {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid rgb(25, 135, 84);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
             }
 
-            .loading-spinner {
-                border: 8px solid #f3f3f3;
-                border-top: 8px solid rgb(25, 135, 84);
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                animation: spin 1s linear infinite;
+            100% {
+                transform: rotate(360deg);
             }
+        }
 
-            @keyframes spin {
-                0% {
-                    transform: rotate(0deg);
-                }
-
-                100% {
-                    transform: rotate(360deg);
-                }
-            }
-
-            p {
-                margin-top: 10px;
-                font-weight: bold;
-            }
-        
+        p {
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -55,24 +54,148 @@
         src="https://institucion-educativa-eugenio-diaz-castro.micolombiadigital.gov.co/sites/institucion-educativa-eugenio-diaz-castro/content/files/000001/14_eugenio2_200x200.png"
         alt="" class="img-fluid p-3">
     <div class="d-flex flex-column m-2">
+
+        <label for="selectAsignatura">Asignatura:</label>
+        <select name="selectAsignatura" id="selectAsignatura" onchange="seleccionarAsignatura()">
+            <option>Seleccionar...</option>
+        </select>
+
+        <label for="selectSede">Sede:</label>
+        <select name="selectSede" id="selectSede" onchange="seleccionarSede()">
+            <option>Seleccionar...</option>
+        </select>
+
+        <label for="selectGrado">Grado:</label>
+        <select name="selectGrado" id="selectGrado" onchange="seleccionarGrado()">
+            <option>Seleccionar...</option>
+        </select>
+
         <button id="miBoton" class="btn btn-success m-2" onclick="filtrarPlanilla()">Filtrar Planilla</button>
+
+        <p id="mensajes" style="color: rgb(165, 79, 79);"></p>
     </div>
     <div class="loading-container">
         <div class="loading-spinner"></div>
         <p>Procesando...</p>
     </div>
     <script>
+        var selectedAsignatura = "";
+        var selectedSede = "";
+        var selectedGrado = "";
+        document.addEventListener("DOMContentLoaded", function () {
+            //agregar asignaturas
+            google.script.run.withSuccessHandler(opcionesAsignatura).getAsignaturas();
+            google.script.run.withSuccessHandler(opcionesSede).getSedes();
+            google.script.run.withSuccessHandler(opcionesGrado).getGrados();      
+
+
+        });
+
         function filtrarPlanilla() {
+
+            if (selectedAsignatura == "") {
+                document.getElementById("mensajes").innerHTML = "No ha seleccionado la Asignatura";
+            }
+            else if (selectedSede == "") {
+                document.getElementById("mensajes").innerHTML = "No ha seleccionado la Sede";
+            }
+            else if (selectedGrado == "") {
+                document.getElementById("mensajes").innerHTML = "No ha seleccionado el Grado";
+            }
             // Obtén una referencia al botón por su ID o como mejor lo necesites.
             var boton = document.getElementById('miBoton');
             // Deshabilita el botón.
             boton.disabled = true;
 
-            google.script.run.withSuccessHandler(habilitarBoton).filtrarPlanilla()
+            google.script.run.withSuccessHandler(habilitarBoton).generarPlanilla(selectedAsignatura, selectedSede, selectedGrado);
 
             //Iniciar animación de 'procesando'
             document.querySelector(".loading-container").style.display = "flex";
         }
+
+        function seleccionarAsignatura() {
+            // Obtener el elemento select
+            var selectElement = document.getElementById("selectAsignatura");
+
+            // Obtener el valor seleccionado
+            selectedAsignatura = selectElement.value;
+
+            if (selectedAsignatura == "Seleccionar...") {
+                selectedAsignatura = "";               
+            }
+            cambiarNombre();  
+        }
+
+        function seleccionarSede() {
+            // Obtener el elemento select
+            var selectElement = document.getElementById("selectSede");
+
+            // Obtener el valor seleccionado
+            selectedSede = selectElement.value;
+            
+            if (selectedSede == "Seleccionar...") {
+                selectedSede = "";               
+            }
+            cambiarNombre();  
+           
+        }
+
+        function seleccionarGrado() {
+            // Obtener el elemento select
+            var selectElement = document.getElementById("selectGrado");
+
+            // Obtener el valor seleccionado
+            selectedGrado = selectElement.value;
+
+            if (selectedGrado == "Seleccionar...") {
+                selectedGrado = "";               
+            }
+            cambiarNombre();  
+        }
+
+        function cambiarNombre() {
+            document.getElementById("mensajes").innerHTML = "";
+            // Obtiene el botón por su id
+            var boton = document.getElementById("miBoton");
+
+            // Cambia el texto del botón
+            boton.innerText = "Generar planilla de " + selectedAsignatura + " - sede " + selectedSede + " - grado " + selectedGrado;
+        }
+
+        function opcionesAsignatura(obj) {
+            const selectAsignatura = document.getElementById("selectAsignatura");
+
+            obj.forEach(element => {
+                const option = document.createElement("option");
+                option.value = element;
+                option.text = element;
+                selectAsignatura.appendChild(option);
+            });
+        }
+
+        function opcionesSede(obj) {
+            const selectSede = document.getElementById("selectSede");
+
+            obj.forEach(element => {
+                const option = document.createElement("option");
+                option.value = element;
+                option.text = element;
+                selectSede.appendChild(option);
+            });
+        }
+
+        function opcionesGrado(obj) {
+            const selectSede = document.getElementById("selectGrado");
+
+            obj.forEach(element => {
+                const option = document.createElement("option");
+                option.value = element;
+                option.text = element;
+                selectGrado.appendChild(option);
+            });
+        }
+
+        
 
         // Habilita el botón.
         function habilitarBoton() {

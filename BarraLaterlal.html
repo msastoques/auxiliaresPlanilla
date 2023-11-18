@@ -19,7 +19,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 50vh;
             background-color: #f4f4f4;
         }
 
@@ -70,6 +70,11 @@
             <option>Seleccionar...</option>
         </select>
 
+        <label for="selectPeriodo">Periodo:</label>
+        <select name="selectPeriodo" id="selectPeriodo" onchange="seleccionarPeriodo()">
+            <option>Seleccionar...</option>
+        </select>
+
         <button id="miBoton" class="btn btn-success m-2" onclick="filtrarPlanilla()">Filtrar Planilla</button>
 
         <p id="mensajes" style="color: rgb(165, 79, 79);"></p>
@@ -82,35 +87,38 @@
         var selectedAsignatura = "";
         var selectedSede = "";
         var selectedGrado = "";
+        var selectedPeriodo = "";
         document.addEventListener("DOMContentLoaded", function () {
             //agregar asignaturas
             google.script.run.withSuccessHandler(opcionesAsignatura).getAsignaturas();
             google.script.run.withSuccessHandler(opcionesSede).getSedes();
             google.script.run.withSuccessHandler(opcionesGrado).getGrados();      
+            google.script.run.withSuccessHandler(opcionesPeriodo).getPeriodos();      
 
 
         });
 
         function filtrarPlanilla() {
+            //Iniciar animación de 'procesando'
+            document.querySelector(".loading-container").style.display = "flex";
 
             if (selectedAsignatura == "") {
                 document.getElementById("mensajes").innerHTML = "No ha seleccionado la Asignatura";
-            }
-            else if (selectedSede == "") {
+            } else if (selectedSede == "") {
                 document.getElementById("mensajes").innerHTML = "No ha seleccionado la Sede";
-            }
-            else if (selectedGrado == "") {
+            } else if (selectedGrado == "") {
                 document.getElementById("mensajes").innerHTML = "No ha seleccionado el Grado";
+            } else if (selectedPeriodo == "") {
+                document.getElementById("mensajes").innerHTML = "No ha seleccionado el Periodo";
             }
             // Obtén una referencia al botón por su ID o como mejor lo necesites.
             var boton = document.getElementById('miBoton');
             // Deshabilita el botón.
             boton.disabled = true;
 
-            google.script.run.withSuccessHandler(habilitarBoton).generarPlanilla(selectedAsignatura, selectedSede, selectedGrado);
+            google.script.run.withSuccessHandler(habilitarBoton).generarPlanilla(selectedAsignatura, selectedSede, selectedGrado, selectedPeriodo);
 
-            //Iniciar animación de 'procesando'
-            document.querySelector(".loading-container").style.display = "flex";
+            
         }
 
         function seleccionarAsignatura() {
@@ -153,6 +161,19 @@
             cambiarNombre();  
         }
 
+        function seleccionarPeriodo() {
+            // Obtener el elemento select
+            var selectElement = document.getElementById("selectPeriodo");
+
+            // Obtener el valor seleccionado
+            selectedPeriodo = selectElement.value;
+
+            if (selectedPeriodo == "Seleccionar...") {
+                selectedPeriodo = "";               
+            }
+            cambiarNombre();  
+        }
+
         function cambiarNombre() {
             document.getElementById("mensajes").innerHTML = "";
             // Obtiene el botón por su id
@@ -185,13 +206,24 @@
         }
 
         function opcionesGrado(obj) {
-            const selectSede = document.getElementById("selectGrado");
+            const selectGrado = document.getElementById("selectGrado");
 
             obj.forEach(element => {
                 const option = document.createElement("option");
                 option.value = element;
                 option.text = element;
                 selectGrado.appendChild(option);
+            });
+        }
+
+        function opcionesPeriodo(obj) {
+            const selectPeriodo = document.getElementById("selectPeriodo");
+
+            obj.forEach(element => {
+                const option = document.createElement("option");
+                option.value = element;
+                option.text = element;
+                selectPeriodo.appendChild(option);
             });
         }
 

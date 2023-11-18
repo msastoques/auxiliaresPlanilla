@@ -16,16 +16,41 @@ function mostrarBarraLateral() {
 
 }
 
-function generarPlanilla(asignatura, sede, grado) {
-    if(asignatura == "" ||sede == "" || grado == "")
-    {
-        return{};
+function generarPlanilla(asignatura, sede, grado, periodo) {
+
+    //#region probar function
+    asignatura = 'Artes';
+    sede = 'Charquito';
+    grado = '601';
+    periodo = 'II';
+    //#endregion
+
+    if (asignatura == "" || sede == "" || grado == "" || periodo == "") {
+        return {};
     }
     let ui = SpreadsheetApp.getUi();
     let respuesta = ui.alert('Generador de planillas. Pulsa Si para continuar', ui.ButtonSet.YES_NO);
+
     if (respuesta == ui.Button.YES) {
+        const gestor = new GestorLista();
+        const listaFiltrada = gestor.getLista(asignatura, sede, grado);
+
+        const planilla = new GestorPlanilla();
+        planilla.fillPlanilla(listaFiltrada, 'III');
+        //Logger.log(listaFiltrada);
+
     } else {
         ui.alert('Se ha cancelado la generación de planillas')
     }
-    return{};
+    return {};
+}
+
+function pruebaFiltrar() {
+    const gestor = new GestorLista();
+
+    const listaCompleta = gestor.getListaCompleta();
+
+    let listaFiltrada = listaCompleta.filter(fila => fila[4] == "1002");
+
+    Logger.log(listaFiltrada.length);
 }

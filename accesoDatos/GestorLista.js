@@ -1,5 +1,6 @@
 /**
  * Clase que trae los datos de la hoja de cálculo.
+ * @author msastoque
  */
 
 class GestorLista {

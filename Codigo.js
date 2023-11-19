@@ -19,15 +19,16 @@ function mostrarBarraLateral() {
 function generarPlanilla(asignatura, sede, grado, periodo) {
 
     //#region probar function
-    asignatura = 'Artes';
-    sede = 'Charquito';
-    grado = '601';
-    periodo = 'II';
+    // asignatura = 'Artes';
+    // sede = 'Charquito';
+    // grado = '601';
+    // periodo = 'II';
     //#endregion
 
     if (asignatura == "" || sede == "" || grado == "" || periodo == "") {
         return {};
     }
+    
     let ui = SpreadsheetApp.getUi();
     let respuesta = ui.alert('Generador de planillas. Pulsa Si para continuar', ui.ButtonSet.YES_NO);
 
@@ -35,8 +36,13 @@ function generarPlanilla(asignatura, sede, grado, periodo) {
         const gestor = new GestorLista();
         const listaFiltrada = gestor.getLista(asignatura, sede, grado);
 
+        if (listaFiltrada.length == 0) {
+            ui.alert(`No tiene asignada ${asignatura} en ${sede} - ${grado}`)
+            return {};
+        }
+
         const planilla = new GestorPlanilla();
-        planilla.fillPlanilla(listaFiltrada, 'III');
+        planilla.fillPlanilla(listaFiltrada, periodo);
         //Logger.log(listaFiltrada);
 
     } else {
